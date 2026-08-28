@@ -157,7 +157,7 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    const customerExists = await customer.findById(req.customerId);
+    const customerExists = await customer.findById(req.customer._id);
 
     if (!customerExists) {
       return res.status(401).json({
