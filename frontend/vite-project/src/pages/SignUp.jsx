@@ -1,18 +1,46 @@
 import React from "react";
 import image1 from "../assets/image1.png";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axiosInstance from "../services/api";
 
 const SignUp = () => {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+  });
+  const [err, setErr] = useState("");
+  const [loader, setLoader] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+    setLoader(true);
+    try {
+      await axiosInstance.post("/users/signup", form);
+      navigate("/home");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#D8D0C4] flex items-center justify-center p-8">
-
       {/* Main Card */}
       <div className="w-full max-w-[1080px] h-[768px] bg-white rounded-[52px] p-4 flex overflow-hidden">
-
         {/* ================= LEFT SIDE ================= */}
         <div className="w-1/2 flex items-center justify-center">
-
           <div className="w-[340px]">
-
             {/* Heading */}
             <div className="text-center mb-12">
               <h1 className="text-[34px] font-semibold text-[#303030] tracking-[-1.5px]">
@@ -28,7 +56,10 @@ const SignUp = () => {
             <div className="relative mb-3">
               <input
                 type="text"
+                name="name"
                 placeholder="Full Name"
+                value={form.name}
+                onChange={handleChange}
                 className="
                   w-full
                   h-[44px]
@@ -49,7 +80,10 @@ const SignUp = () => {
             <div className="relative mb-3">
               <input
                 type="email"
+                name="email"
                 placeholder="Email"
+                value={form.email}
+                onChange={handleChange}
                 className="
                   w-full
                   h-[44px]
@@ -75,7 +109,10 @@ const SignUp = () => {
             <div className="relative mb-3">
               <input
                 type="tel"
+                name="phone"
                 placeholder="Mobile Number"
+                value={form.phone}
+                onChange={handleChange}
                 className="
                   w-full
                   h-[44px]
@@ -102,6 +139,9 @@ const SignUp = () => {
               <input
                 type="password"
                 placeholder="Password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
                 className="
                   w-full
                   h-[44px]
@@ -125,6 +165,7 @@ const SignUp = () => {
 
             {/* SignUp Button */}
             <button
+              onClick={handleSubmit}
               className="
                 w-full
                 h-[44px]
@@ -144,30 +185,23 @@ const SignUp = () => {
             {/* Login */}
             <p className="text-center text-[11px] text-[#aaaaaa] mt-5">
               Already have an account?{" "}
-              <button className="text-[#333333] font-medium">
+              <Link to="/login" className="text-[#333333] font-medium">
                 LogIn
-              </button>
+              </Link>
             </p>
-
           </div>
-
         </div>
 
         {/* ================= RIGHT SIDE ================= */}
         <div className="w-1/2 p-0">
-
           <div className="w-full h-full rounded-[38px] overflow-hidden">
-
             <img
               src={image1}
               alt="Landscape"
               className="w-full h-full object-cover"
             />
-
           </div>
-
         </div>
-
       </div>
     </div>
   );
