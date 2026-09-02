@@ -22,7 +22,7 @@ const Login = () => {
       await axiosInstance.post("/customers/login", form);
       navigate("/home");
     } catch (error) {
-      console.log(error);
+      setErr(error.response.data.message || "Login falied");
     } finally {
       setLoader(false);
     }
@@ -45,6 +45,8 @@ const Login = () => {
             <p className="text-center text-[11px] text-[#303030] mb-5">
               Please enter your details.
             </p>
+
+            {err && <p className="text-center text-red-500">{err}</p>}
 
             {/* Email */}
             <div className="relative mb-3">

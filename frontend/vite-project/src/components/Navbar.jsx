@@ -1,11 +1,14 @@
-import { Link, Navigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../services/api";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
   const handleLogout = async () => {
     try {
-      await axios.post("/customers/logout");
-      Navigate("/login");
+      await axiosInstance.post("/customers/logout");
+      console.log("Logout Successfull")
+      navigate("/login");
     } catch (error) {
       console.log("Logout Falied : ", error);
     }
