@@ -19,7 +19,7 @@ const Login = () => {
     setErr("");
     setLoader(true);
     try {
-      await axiosInstance.post("/users/login", form);
+      await axiosInstance.post("/customers/login", form);
       navigate("/home");
     } catch (error) {
       console.log(error);

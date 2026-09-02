@@ -25,7 +25,7 @@ const SignUp = () => {
     setErr("");
     setLoader(true);
     try {
-      await axiosInstance.post("/users/signup", form);
+      await axiosInstance.post("/customers/register", form);
       navigate("/home");
     } catch (error) {
       console.log(error);
