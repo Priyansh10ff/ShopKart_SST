@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import image1 from "../assets/image1.png";
 import axiosInstance from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -9,6 +10,7 @@ const Login = () => {
   const [loader, setLoader] = useState(false);
 
   const navigate = useNavigate();
+  const { setCustomer } = useAuth();
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -19,8 +21,9 @@ const Login = () => {
     setErr("");
     setLoader(true);
     try {
-      await axiosInstance.post("/customers/login", form);
+      const response = await axiosInstance.post("/customers/login", form);
 
+      setCustomer(response.data.emailExists);
       navigate("/home");
     } catch (error) {
       setErr(error.response.data.message || "Login falied");

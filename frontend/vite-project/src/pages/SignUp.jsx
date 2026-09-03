@@ -3,6 +3,7 @@ import image1 from "../assets/image1.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axiosInstance from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -15,6 +16,7 @@ const SignUp = () => {
   const [loader, setLoader] = useState(false);
 
   const navigate = useNavigate();
+  const { setCustomer } = useAuth();
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -25,7 +27,8 @@ const SignUp = () => {
     setErr("");
     setLoader(true);
     try {
-      await axiosInstance.post("/customers/register", form);
+      const response = await axiosInstance.post("/customers/register", form);
+      setCustomer(response.data.newCustomer);
       navigate("/home");
     } catch (error) {
       setErr(error.response.data.message || "Login falied");

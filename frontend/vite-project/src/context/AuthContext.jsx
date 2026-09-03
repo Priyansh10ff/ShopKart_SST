@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     axiosInstance
       .get("/customers/me")
       .then((res) => {
-        setCustomer(res.data);
+        setCustomer(res.data.customer);
       })
       .catch((error) => {
         console.log(error);

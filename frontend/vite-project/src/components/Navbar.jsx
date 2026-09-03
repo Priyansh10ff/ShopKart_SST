@@ -9,6 +9,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await axiosInstance.post("/customers/logout");
+      setCustomer(null);
       navigate("/login");
     } catch (error) {
       console.log("Logout Falied : ", error);
