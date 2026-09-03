@@ -20,6 +20,7 @@ const Login = () => {
     setLoader(true);
     try {
       await axiosInstance.post("/customers/login", form);
+
       navigate("/home");
     } catch (error) {
       setErr(error.response.data.message || "Login falied");
