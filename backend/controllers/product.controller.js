@@ -41,6 +41,7 @@ export const createProduct = async (req, res) => {
   }
 };
 
+// Need to add the logic
 export const getProducts = async (req, res) => {
   try {
   } catch (error) {
