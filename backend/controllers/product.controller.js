@@ -44,6 +44,30 @@ export const createProduct = async (req, res) => {
 // Need to add the logic
 export const getProducts = async (req, res) => {
   try {
+    const { search, category } = req.query;
+
+    const query = {};
+
+    if (search) {
+      query.name = {
+        $regex: search,
+        $options: "i",
+      };
+    }
+
+    if (category) {
+      query.category = category;
+    }
+
+    const products = await Product.find(query).select(
+      "name description price category image stock createdAt",
+    );
+
+    return res.status(200).json({
+      success: true,
+      count: products.length,
+      products,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Internal Server Error",
