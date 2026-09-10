@@ -1,22 +1,23 @@
 import Product from "../models/product.model.js";
+import mongoose from "mongoose";
 export const createProduct = async (req, res) => {
   try {
     const { name, description, price, category, image, stock } = req.body;
 
-    if (!name || !description || !price || !category || !image || !stock) {
+    if (!name || !description || price === undefined || !category || !image || stock === undefined) {
       res.status(400).json({
         message: "All fields are required",
       });
     }
 
     if (price <= 0) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "Inavlid Price",
       });
     }
 
-    if (stock <= 0) {
-      res.status(400).json({
+    if (stock < 0) {
+      return res.status(400).json({
         message: "Inavlid stock",
       });
     }
@@ -79,7 +80,15 @@ export const getProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+
     const product = await Product.findById(id);
+
 
     if (!product) {
       return res.status(404).json({
