@@ -5,7 +5,7 @@ export const createProduct = async (req, res) => {
     const { name, description, price, category, image, stock } = req.body;
 
     if (!name || !description || price === undefined || !category || !image || stock === undefined) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "All fields are required",
       });
     }
