@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../services/api";
-import { useNavigate } from "react-router-dom";
+import ProductCard from "../components/ProductCard";
+import SearchBar from "../components/SearchBar";
+import CategoryFilter from "../components/CategoryFilter";
 
 const Products = () => {
-  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -47,34 +48,11 @@ const Products = () => {
     <div>
       <h1>Products</h1>
 
-      <input
-        type="text"
-        placeholder="Search products..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        <option value="">All Categories</option>
-        <option value="Electronics">Electronics</option>
-        <option value="Fashion">Fashion</option>
-        <option value="Books">Books</option>
-        <option value="Home">Home</option>
-      </select>
+      <SearchBar search={search} setSearch={setSearch} />
+      <CategoryFilter category={category} setCategory={setCategory} />
 
       {products.map((product) => (
-        <div key={product._id}>
-          <img src={product.image} alt={product.name} />
-
-          <h2>{product.name}</h2>
-          <p>{product.category}</p>
-          <p>₹{product.price}</p>
-          <p>{product.stock} units left</p>
-
-          <button onClick={() => navigate(`/products/${product._id}`)}>
-            View Details
-          </button>
-        </div>
+        <ProductCard key={product._id} product={product} />
       ))}
     </div>
   );
