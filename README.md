@@ -1,6 +1,12 @@
 # ShopKart
 
-ShopKart is an e-commerce project with an Express and MongoDB backend for customer account management.
+ShopKart is a full-stack e-commerce application built with React, Express, and MongoDB. It supports customer authentication, product browsing, product details, and protected customer actions.
+
+## Tech Stack
+
+- Frontend: React 19, React Router, Vite, Tailwind CSS, Axios
+- Backend: Node.js, Express, MongoDB with Mongoose
+- Authentication: JWT, HTTP-only cookies, and bcrypt
 
 ## Project Structure
 
@@ -15,57 +21,80 @@ ShopKart/
 |   |-- index.js
 |   |-- package.json
 |-- frontend/
+|   |-- src/
+|   |   |-- components/
+|   |   |-- context/
+|   |   |-- pages/
+|   |   |-- services/
+|   |-- package.json
+|-- README.md
 ```
 
-## Backend
+## Prerequisites
 
-The backend is built with:
-
-- Node.js
-- Express
-- MongoDB with Mongoose
-- JWT for authentication
-- bcrypt for password hashing
-- cookie-parser for cookies
+- Node.js and npm
+- A running MongoDB instance or MongoDB Atlas connection
 
 ## Setup
 
-1. Open a terminal in the backend directory:
+### Backend
+
+1. Install dependencies:
 
    ```bash
    cd backend
-   ```
-
-2. Install dependencies:
-
-   ```bash
    npm install
    ```
 
-3. Create a `.env` file inside `backend/` with the required environment variables:
+2. Create `backend/.env`:
 
    ```env
-   PORT=5000
+   PORT=8001
    MONGO_URL=your_mongodb_connection_string
    JWT_SECRET=your_jwt_secret
    ```
 
-4. Start the backend with Nodemon:
+3. Start the API server:
 
    ```bash
    npx nodemon index.js
    ```
 
-## API Base Path
+The backend runs at `http://localhost:8001` when `PORT=8001`.
 
-Customer endpoints are available under:
+### Frontend
 
-```text
-/customers
+In a separate terminal, install dependencies and start the Vite development server:
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-The root endpoint is available at:
+The frontend runs at `http://localhost:5173` by default.
 
-```text
-/
+## API Endpoints
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/` | API health check |
+| `POST` | `/customers/register` | Register a customer |
+| `POST` | `/customers/login` | Log in a customer |
+| `GET` | `/customers/me` | Get the authenticated customer |
+| `POST` | `/customers/logout` | Log out a customer |
+| `PATCH` | `/customers/change-password` | Change the authenticated customer's password |
+| `GET` | `/products` | Get all products |
+| `GET` | `/products/:id` | Get a product by ID |
+| `POST` | `/products` | Create a product |
+
+## Available Frontend Commands
+
+Run these commands from `frontend/`:
+
+```bash
+npm run dev       # Start the development server
+npm run build     # Create a production build
+npm run preview   # Preview the production build
+npm run lint      # Run ESLint
 ```
