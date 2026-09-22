@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import customer from "../models/customer.model.js";
 import genToken from "../utils/generateToken.js";
+import Customer from "../models/customer.model.js";
+import Product from "../models/product.model.js";
 
 const cookieOptions = {
   httpOnly: true,
@@ -168,7 +170,7 @@ export const changePassword = async (req, res) => {
 
     const correctPassword = bcrypt.compareSync(
       oldPassword,
-      customerExists.password
+      customerExists.password,
     );
 
     if (!correctPassword) {
@@ -188,6 +190,102 @@ export const changePassword = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const addToWishlist = async (req, res) => {
+  try {
+    const userId = req.customer._id;
+    const { productId } = req.params;
+
+    const customer = await Customer.findById(userId);
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({
+        message: "No product found",
+      });
+    }
+
+    const isAlreadyInWishlist = customer.wishlist.some(
+      (id) => id.toString() === productId.toString(),
+    );
+
+    if (isAlreadyInWishlist) {
+      return res.status(409).json({
+        message: "Product already in wishlist",
+      });
+    }
+
+    customer.wishlist.push(productId);
+
+    await customer.save();
+
+    return res.status(200).json({
+      message: "Product added to wishlist",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const getWishlist = async (req, res) => {
+  try {
+    const userId = req.customer._id;
+
+    const customer = await Customer.findById(userId).populate("wishlist");
+
+    if (!customer) {
+      return res.status(404).json({
+        message: "Customer not found",
+      });
+    }
+
+    return res.status(200).json({
+      wishlist: customer.wishlist,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const removeFromWishlist = async (req, res) => {
+  try {
+    const userId = req.customer._id;
+    const { productId } = req.params;
+
+    const customer = await Customer.findById(userId);
+
+    const isInWishlist = customer.wishlist.some(
+      (id) => id.toString() === productId.toString(),
+    );
+
+    if (!isInWishlist) {
+      return res.status(404).json({
+        message: "Product not found in wishlist",
+      });
+    }
+
+    customer.wishlist.pull(productId);
+
+    await customer.save();
+
+    return res.status(200).json({
+      message: "Product removed from wishlist",
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
       message: "Internal Server Error",
     });
   }
