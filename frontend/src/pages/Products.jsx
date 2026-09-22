@@ -6,6 +6,7 @@ import CategoryFilter from "../components/CategoryFilter";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [search, setSearch] = useState("");
@@ -36,14 +37,26 @@ const Products = () => {
     fetchProducts();
   }, [search, category]);
 
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
+        const response = await axiosInstance.get("/customers/wishlist");
+
+        setWishlist(response.data.wishlist);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchWishlist();
+  }, []);
+
   const handleCategoryClick = (selectedCategory) => {
     setCategory(selectedCategory);
   };
 
   return (
     <div className="min-h-screen bg-[#faf9f7] text-[#303030]">
-      
-
       {/* Navbar */}
       <nav className="border-b border-gray-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
@@ -61,6 +74,10 @@ const Products = () => {
               className="border-b-2 border-[#ff6b35] pb-1 text-[#ff6b35]"
             >
               Products
+            </a>
+
+            <a href="/wishlist" className="transition hover:text-[#ff6b35]">
+              Wishlist
             </a>
 
             <button
@@ -109,6 +126,7 @@ const Products = () => {
                 onClick={() => {
                   setSearch("");
                   setCategory("");
+
                   window.scrollTo({
                     top: document.getElementById("products-section").offsetTop,
                     behavior: "smooth",
@@ -149,6 +167,7 @@ const Products = () => {
         <div className="mb-6 flex items-end justify-between">
           <div>
             <p className="text-sm font-medium text-[#ff6b35]">EXPLORE</p>
+
             <h2 className="mt-1 text-2xl font-bold sm:text-3xl">
               Shop by Categories
             </h2>
@@ -176,7 +195,9 @@ const Products = () => {
             <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f5f2ed] text-3xl">
               💻
             </div>
+
             <h3 className="font-semibold">Electronics</h3>
+
             <p className="mt-1 text-xs text-gray-500">Shop Now →</p>
           </button>
 
@@ -192,7 +213,9 @@ const Products = () => {
             <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f5f2ed] text-3xl">
               👕
             </div>
+
             <h3 className="font-semibold">Fashion</h3>
+
             <p className="mt-1 text-xs text-gray-500">Shop Now →</p>
           </button>
 
@@ -208,7 +231,9 @@ const Products = () => {
             <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f5f2ed] text-3xl">
               📚
             </div>
+
             <h3 className="font-semibold">Books</h3>
+
             <p className="mt-1 text-xs text-gray-500">Shop Now →</p>
           </button>
 
@@ -224,7 +249,9 @@ const Products = () => {
             <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f5f2ed] text-3xl">
               🏠
             </div>
+
             <h3 className="font-semibold">Home</h3>
+
             <p className="mt-1 text-xs text-gray-500">Shop Now →</p>
           </button>
         </div>
@@ -248,24 +275,16 @@ const Products = () => {
             </div>
 
             <div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
-              <SearchBar
-                search={search}
-                setSearch={setSearch}
-              />
+              <SearchBar search={search} setSearch={setSearch} />
 
-              <CategoryFilter
-                category={category}
-                setCategory={setCategory}
-              />
+              <CategoryFilter category={category} setCategory={setCategory} />
             </div>
           </div>
         </div>
 
         {loading && (
           <div className="rounded-3xl bg-white py-20 text-center shadow-sm">
-            <h2 className="text-lg text-gray-500">
-              Loading products...
-            </h2>
+            <h2 className="text-lg text-gray-500">Loading products...</h2>
           </div>
         )}
 
@@ -279,9 +298,7 @@ const Products = () => {
 
         {!loading && !error && products.length === 0 && (
           <div className="rounded-3xl bg-white py-20 text-center shadow-sm">
-            <h2 className="text-lg text-gray-500">
-              No products found.
-            </h2>
+            <h2 className="text-lg text-gray-500">No products found.</h2>
 
             <button
               type="button"
@@ -302,6 +319,7 @@ const Products = () => {
               <ProductCard
                 key={product._id}
                 product={product}
+                wishlist={wishlist}
               />
             ))}
           </div>
@@ -313,7 +331,9 @@ const Products = () => {
         <div className="mx-auto grid max-w-7xl grid-cols-1 divide-y divide-gray-200 px-4 py-8 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:px-6 lg:px-8">
           <div className="px-6 py-4 text-center">
             <p className="text-2xl">🚚</p>
+
             <h3 className="mt-2 font-semibold">Fast Delivery</h3>
+
             <p className="mt-1 text-xs text-gray-500">
               Quick and reliable shipping
             </p>
@@ -321,7 +341,9 @@ const Products = () => {
 
           <div className="px-6 py-4 text-center">
             <p className="text-2xl">🔒</p>
+
             <h3 className="mt-2 font-semibold">Secure Shopping</h3>
+
             <p className="mt-1 text-xs text-gray-500">
               Safe and simple checkout
             </p>
@@ -329,7 +351,9 @@ const Products = () => {
 
           <div className="px-6 py-4 text-center">
             <p className="text-2xl">✓</p>
+
             <h3 className="mt-2 font-semibold">Quality Products</h3>
+
             <p className="mt-1 text-xs text-gray-500">
               Products you can rely on
             </p>

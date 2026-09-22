@@ -195,7 +195,7 @@ export const changePassword = async (req, res) => {
   }
 };
 
-export const addToWishlist = async (req, res) => {
+export const updateWishlist = async (req, res) => {
   try {
     const userId = req.customer._id;
     const { productId } = req.params;
@@ -203,9 +203,15 @@ export const addToWishlist = async (req, res) => {
     const customer = await Customer.findById(userId);
     const product = await Product.findById(productId);
 
+    if (!customer) {
+      return res.status(404).json({
+        message: "Customer not found",
+      });
+    }
+
     if (!product) {
       return res.status(404).json({
-        message: "No product found",
+        message: "Product not found",
       });
     }
 
@@ -214,8 +220,13 @@ export const addToWishlist = async (req, res) => {
     );
 
     if (isAlreadyInWishlist) {
-      return res.status(409).json({
-        message: "Product already in wishlist",
+      customer.wishlist.pull(productId);
+
+      await customer.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Product removed from wishlist",
       });
     }
 
@@ -224,9 +235,12 @@ export const addToWishlist = async (req, res) => {
     await customer.save();
 
     return res.status(200).json({
+      success: true,
       message: "Product added to wishlist",
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
@@ -247,45 +261,14 @@ export const getWishlist = async (req, res) => {
     }
 
     return res.status(200).json({
+      success: true,
       wishlist: customer.wishlist,
     });
   } catch (error) {
     console.log(error);
 
     return res.status(500).json({
-      message: "Internal Server Error",
-    });
-  }
-};
-
-export const removeFromWishlist = async (req, res) => {
-  try {
-    const userId = req.customer._id;
-    const { productId } = req.params;
-
-    const customer = await Customer.findById(userId);
-
-    const isInWishlist = customer.wishlist.some(
-      (id) => id.toString() === productId.toString(),
-    );
-
-    if (!isInWishlist) {
-      return res.status(404).json({
-        message: "Product not found in wishlist",
-      });
-    }
-
-    customer.wishlist.pull(productId);
-
-    await customer.save();
-
-    return res.status(200).json({
-      message: "Product removed from wishlist",
-    });
-  } catch (error) {
-    console.log(error);
-
-    return res.status(500).json({
+      success: false,
       message: "Internal Server Error",
     });
   }
